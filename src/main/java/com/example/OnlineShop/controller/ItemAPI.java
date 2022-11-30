@@ -2,6 +2,7 @@ package com.example.OnlineShop.controller;
 
 
 import com.example.OnlineShop.models.Item;
+//import com.example.OnlineShop.repo.BasketRepo;
 import com.example.OnlineShop.repo.ItemRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,8 @@ import java.util.List;
 public class ItemAPI {
     @Autowired
     private ItemRepo itemRepo;
+    //@Autowired
+    //private BasketRepo basketRepo;
 
     @GetMapping(value = "/list")
     public List<Item> getListItems(){
@@ -25,6 +28,9 @@ public class ItemAPI {
     }
     @PostMapping(value = "/item/save")
     public String saveItem(@RequestBody Item item){
+        //TODO Добавить проверку продавца
+
+
         itemRepo.save(item);
         return "Товар сохранен";
     }
@@ -36,6 +42,7 @@ public class ItemAPI {
         updatedItem.setDescription(item.getDescription());
         updatedItem.setPrice(item.getPrice());
         updatedItem.setAmount(item.getAmount());
+        updatedItem.setRating(item.getRating());
         itemRepo.save(updatedItem);
         return "Товар обновлен";
     }

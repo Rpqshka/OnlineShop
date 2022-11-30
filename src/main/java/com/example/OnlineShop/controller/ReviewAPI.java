@@ -17,22 +17,36 @@ import java.util.Objects;
 public class ReviewAPI {
     @Autowired
     private ReviewRepo reviewRepo;
-    private ReviewRepo reviewRepoBuff;
 
     @GetMapping(value = "/item/reviews")
-    public List<Review> getReviews(){
+    public Iterable<Review> getReviews(){
         return reviewRepo.findAll();
     }
 
-   /* @RequestMapping(value = "/item/reviews/id{idItem}")
-    public List<Review> getReviews(@PathVariable long idItem){
+    @RequestMapping(value = "/item/reviews/idItem{idItem}")
+    public List<Review> getReviewsByIdItem(@PathVariable long idItem){
+        return reviewRepo.findAllByIdItem(idItem);
+    }
 
-    }*/
-
-    @PostMapping(value = "/item/reviews/id{itemId}/add")
+    @PostMapping(value = "/item/reviews/add")
     public String saveReview(@RequestBody Review review){
         reviewRepo.save(review);
         return "Отзыв на товар сохранен";
+    }
+    @PutMapping(value = "/item/reviews/id{reviewId}/update")
+    public String updateReview(@PathVariable long reviewId,@RequestBody Review review){
+        Review updatedReview = reviewRepo.findById(reviewId).get();
+        updatedReview.setIdItem(review.getIdItem());
+        updatedReview.setComment(review.getComment());
+        updatedReview.setRating(review.getRating());
+        reviewRepo.save(updatedReview);
+        return "Отзыв обновлен";
+    }
+    @DeleteMapping(value = "/item/reviews/id{reviewId}/delete")
+    public String deleteReview(@PathVariable long reviewId){
+        Review deleteReview = reviewRepo.findById(reviewId).get();
+        reviewRepo.delete(deleteReview);
+        return "Отзыв с id " + reviewId + "удален";
     }
 
 }

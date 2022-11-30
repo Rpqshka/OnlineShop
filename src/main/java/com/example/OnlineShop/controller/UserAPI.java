@@ -19,30 +19,36 @@ public class UserAPI {
     private UserRepo userRepo;
 
     @GetMapping(value = "/users")
-    public List<User> getUsers(){
+    public Iterable<User> getUsers(){
         return userRepo.findAll();
     }
 
-    @PostMapping(value = "/save")
+    @PostMapping(value = "/user/add")
     public String saveUser(@RequestBody User user){
         userRepo.save(user);
         return "Пользователь сохранен";
     }
 
 
-    @PutMapping(value = "/update/{id}")
-    public String updateUser(@PathVariable long id, @RequestBody User user){
-        User updatedUser = userRepo.findById(id).get();
-        updatedUser.setFirstName(user.getFirstName());
-        updatedUser.setSecondName(user.getSecondName());
-        updatedUser.setEmail(user.getEmail());
-        updatedUser.setPass(user.getPass());
-        updatedUser.setPhone(user.getPhone());
-        userRepo.save(updatedUser);
-        return "Пользователь обновлен";
+    @PutMapping(value = "/user{id}/update/check_admin/{passAdmin}")
+    public String updateUser(@PathVariable long id,@PathVariable String passAdmin, @RequestBody User user){
+        if(userRepo.findByPass(passAdmin).getRole().equals("admin")) {
+            User updatedUser = userRepo.findById(id).get();
+            updatedUser.setFirstName(user.getFirstName());
+            updatedUser.setSecondName(user.getSecondName());
+            updatedUser.setEmail(user.getEmail());
+            updatedUser.setPass(user.getPass());
+            updatedUser.setPhone(user.getPhone());
+            updatedUser.setRole(user.getRole());
+            userRepo.save(updatedUser);
+            return "Пользователь обновлен";
+        }
+        else{
+            return "У вас недостаточно прав";
+        }
     }
 
-    @DeleteMapping(value = "/delete/{id}")
+    @DeleteMapping(value = "/user{id}/delete/check_admin/{passAdmin}")
     public String deleteUser(@PathVariable long id){
         User deleteUser = userRepo.findById(id).get();
         userRepo.delete(deleteUser);
