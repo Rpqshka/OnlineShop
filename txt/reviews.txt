@@ -1,0 +1,7 @@
+ {
+        "id": 2,
+        "idUser": 5,
+        "idItem": 6,
+        "comment": "aasafasfasfasf",
+        "rating": 4
+    }

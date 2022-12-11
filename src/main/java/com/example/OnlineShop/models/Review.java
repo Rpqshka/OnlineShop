@@ -8,6 +8,8 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column
+    private long idUser;
+    @Column
     private long idItem;
     @Column
     private String comment;
@@ -46,5 +48,11 @@ public class Review {
     public void setRating(int rating) {
         this.rating = rating;
     }
+    public long getIdUser() {
+        return idUser;
+    }
 
+    public void setIdUser(long idUser) {
+        this.idUser = idUser;
+    }
 }

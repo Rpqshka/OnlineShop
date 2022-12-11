@@ -18,6 +18,8 @@ public class Item {
     private  int amount;
     @Column
     private float rating;
+    private int ratingSum;
+    private int numberOfReviews;
 
     public long getId() {
         return id;
@@ -65,5 +67,10 @@ public class Item {
 
     public float getRating() {
         return rating;
+    }
+    public void calculateRating(int rating){
+        numberOfReviews++;
+        ratingSum += rating;
+        this.rating = ratingSum / numberOfReviews;
     }
 }

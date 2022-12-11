@@ -3,7 +3,10 @@ package com.example.OnlineShop.controller;
 
 import com.example.OnlineShop.models.Item;
 import com.example.OnlineShop.models.Review;
+import com.example.OnlineShop.models.User;
+import com.example.OnlineShop.repo.ItemRepo;
 import com.example.OnlineShop.repo.ReviewRepo;
+import com.example.OnlineShop.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.*;
@@ -18,35 +21,59 @@ public class ReviewAPI {
     @Autowired
     private ReviewRepo reviewRepo;
 
-    @GetMapping(value = "/item/reviews")
+    @Autowired
+    private UserRepo userRepo;
+    @Autowired
+    private ItemRepo itemRepo;
+
+    @GetMapping(value = "/item/review/all")
     public Iterable<Review> getReviews(){
         return reviewRepo.findAll();
     }
 
-    @RequestMapping(value = "/item/reviews/idItem{idItem}")
+    @RequestMapping(value = "/item/review/{idItem}")
     public List<Review> getReviewsByIdItem(@PathVariable long idItem){
         return reviewRepo.findAllByIdItem(idItem);
     }
 
-    @PostMapping(value = "/item/reviews/add")
-    public String saveReview(@RequestBody Review review){
-        reviewRepo.save(review);
-        return "Отзыв на товар сохранен";
+    //TODO Убрать повторные добавления
+    @PostMapping(value = "/item/review/add/check_role/{email}:{pass}")
+    public String saveReview(@PathVariable String email, @PathVariable String pass, @RequestBody Review review){
+        String userRole = userRepo.findByEmailAndPass(email,pass).getRole();
+        if (userRole.equals("user")) {
+            reviewRepo.save(review);
+            Item item = itemRepo.findById(review.getIdItem()).get();
+            item.calculateRating(review.getRating());
+            itemRepo.save(item);
+            return "Отзыв на товар сохранен";
+        }
+        else
+            return "Вы не можете оставить отзыв";
     }
-    @PutMapping(value = "/item/reviews/id{reviewId}/update")
-    public String updateReview(@PathVariable long reviewId,@RequestBody Review review){
-        Review updatedReview = reviewRepo.findById(reviewId).get();
-        updatedReview.setIdItem(review.getIdItem());
-        updatedReview.setComment(review.getComment());
-        updatedReview.setRating(review.getRating());
-        reviewRepo.save(updatedReview);
-        return "Отзыв обновлен";
+    @PutMapping(value = "/item/review/update/{idReview}")
+    public String updateReview(@PathVariable long idReview,@PathVariable String email, @PathVariable String pass,@RequestBody Review review){
+        if(userRepo.findByEmailAndPass(email,pass).getRole().equals("admin") ||
+                userRepo.findByEmailAndPass(email, pass).getId() == reviewRepo.findById(idReview).get().getIdUser()) {
+            Review updatedReview = reviewRepo.findById(idReview).get();
+            updatedReview.setIdItem(review.getIdItem());
+            updatedReview.setComment(review.getComment());
+            updatedReview.setRating(review.getRating());
+            reviewRepo.save(updatedReview);
+            return "Отзыв обновлен";
+        }
+        else
+            return "Вы не можете обновить этот отзыв";
     }
-    @DeleteMapping(value = "/item/reviews/id{reviewId}/delete")
-    public String deleteReview(@PathVariable long reviewId){
-        Review deleteReview = reviewRepo.findById(reviewId).get();
-        reviewRepo.delete(deleteReview);
-        return "Отзыв с id " + reviewId + "удален";
+    @DeleteMapping(value = "/item/review/delete/{idReview}/check_role/{email}:{pass}")
+    public String deleteReview(@PathVariable long idReview, @PathVariable String email, @PathVariable String pass){
+        if(userRepo.findByEmailAndPass(email,pass).getRole().equals("admin") ||
+                userRepo.findByEmailAndPass(email, pass).getId() == reviewRepo.findById(idReview).get().getIdUser()) {
+            Review deleteReview = reviewRepo.findById(idReview).get();
+            reviewRepo.delete(deleteReview);
+            return "Отзыв с id " + idReview + " удален";
+        }
+        else
+            return "Вы не можете удалить отзыв";
     }
 
 }

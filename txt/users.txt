@@ -1,0 +1,47 @@
+[
+    {
+        "id": 1,
+        "firstName": "Vladislav",
+        "secondName": "Topalov",
+        "email": "rpqshka@gmail.com",
+        "pass": "test",
+        "phone": "+79653779090",
+        "role": "user"
+    },
+    {
+        "id": 2,
+        "firstName": "Alex",
+        "secondName": "Ovechkin",
+        "email": "rpqshka1@gmail.com",
+        "pass": "test1",
+        "phone": "+79653779090",
+        "role": "user"
+    },
+    {
+        "id": 3,
+        "firstName": "Olga",
+        "secondName": "Buzova",
+        "email": "rpqshka2@gmail.com",
+        "pass": "test2",
+        "phone": "+79653779090",
+        "role": "seller"
+    },
+    {
+        "id": 4,
+        "firstName": "Artur",
+        "secondName": "Pirozhkov",
+        "email": "rpqshka3@gmail.com",
+        "pass": "test3",
+        "phone": "+79653779090",
+        "role": "seller"
+    },
+    {
+        "id": 5,
+        "firstName": "Vladimir",
+        "secondName": "Pupkin",
+        "email": "rpqshka4@gmail.com",
+        "pass": "test4",
+        "phone": "+79653779090",
+        "role": "admin"
+    }
+]
